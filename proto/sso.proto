@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "pxr.sso.v1;ssov1;";
+
+service Auth {
+	rpc Register (RegisterRequest) returns (RegisterResponse);
+	rpc Login (LoginRequest) returns (LoginResponse);
+	rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse);
+}
+
+message RegisterRequest {
+	string email = 1; // Email пользователя для регистрации.
+	string password = 2; // Пароль пользователя для регистрации.
+}
+
+message RegisterResponse {
+	int64 user_id = 1; // Идентификатор зарегистрированного пользователя.
+}
+
+message LoginRequest {
+	string email = 1; // Email пользователя для входа.
+	string password = 2; // Пароль пользователя для входа.
+	int32 app_id = 3; // Идентификатор приложения для входа.
+}
+
+message LoginResponse {
+	string token = 1; // Токен авторизации пользователя.
+}
+
+message IsAdminRequest {
+	int64 user_id = 1; // Идентификатор пользователя для проверки.
+}
+
+message IsAdminResponse {
+	bool is_admin = 1; // Пользователь является админом.
+}
