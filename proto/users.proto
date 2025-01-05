@@ -33,8 +33,7 @@ message FollowUserResponse {
 }
 
 message UnfollowUserRequest {
-	int64 userExternalId = 1; // Внешний идентификатор пользователя.
-	int64 unfollowedUserExternalId = 2; // Внешний идентификатор отслеживаемого пользователя.
+	int64 followId = 1; // Идентификатор записи отслеживания.
 }
 
 message UnfollowUserResponse {
