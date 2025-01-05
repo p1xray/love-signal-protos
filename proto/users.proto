@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package users;
+
+option go_package = "pxr.users.v1;usersv1;";
+
+service Users {
+	rpc FollowedUsers (FollowedUsersRequest) returns (FollowedUsersResponse);
+	rpc FollowUser (FollowUserRequest) returns (FollowUserResponse);
+	rpc UnfollowUser (UnfollowUserRequest) returns (UnfollowUserResponse);
+}
+
+message FollowedUsersRequest {
+	int64 userExternalId = 1; // Внешний идентификатор пользователя.
+}
+
+message FollowedUsersResponse {
+	repeated FollowedUser Users = 1; // Список пользователей.
+}
+
+message FollowedUser {
+	int64 id = 1; // Идентификатор пользователя.
+	string name = 2; // Имя пользователя.
+}
+
+message FollowUserRequest {
+	int64 userExternalId = 1; // Внешний идентификатор пользователя.
+	int64 followedUserExternalId = 2; // Внешний идентификатор отслеживаемого пользователя.
+}
+
+message FollowUserResponse {
+	bool success = 1; // Признак успешности операции.
+}
+
+message UnfollowUserRequest {
+	int64 userExternalId = 1; // Внешний идентификатор пользователя.
+	int64 unfollowedUserExternalId = 2; // Внешний идентификатор отслеживаемого пользователя.
+}
+
+message UnfollowUserResponse {
+	bool success = 1; // Признак успешности операции.
+}
