@@ -19,15 +19,19 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Users_FollowedUsers_FullMethodName = "/users.Users/FollowedUsers"
-	Users_FollowUser_FullMethodName    = "/users.Users/FollowUser"
-	Users_UnfollowUser_FullMethodName  = "/users.Users/UnfollowUser"
+	Users_UserInfo_FullMethodName        = "/users.Users/UserInfo"
+	Users_UserProfileCard_FullMethodName = "/users.Users/UserProfileCard"
+	Users_FollowedUsers_FullMethodName   = "/users.Users/FollowedUsers"
+	Users_FollowUser_FullMethodName      = "/users.Users/FollowUser"
+	Users_UnfollowUser_FullMethodName    = "/users.Users/UnfollowUser"
 )
 
 // UsersClient is the client API for Users service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UsersClient interface {
+	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoResponse, error)
+	UserProfileCard(ctx context.Context, in *UserProfileCardRequest, opts ...grpc.CallOption) (*UserProfileCardResponse, error)
 	FollowedUsers(ctx context.Context, in *FollowedUsersRequest, opts ...grpc.CallOption) (*FollowedUsersResponse, error)
 	FollowUser(ctx context.Context, in *FollowUserRequest, opts ...grpc.CallOption) (*FollowUserResponse, error)
 	UnfollowUser(ctx context.Context, in *UnfollowUserRequest, opts ...grpc.CallOption) (*UnfollowUserResponse, error)
@@ -39,6 +43,26 @@ type usersClient struct {
 
 func NewUsersClient(cc grpc.ClientConnInterface) UsersClient {
 	return &usersClient{cc}
+}
+
+func (c *usersClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserInfoResponse)
+	err := c.cc.Invoke(ctx, Users_UserInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersClient) UserProfileCard(ctx context.Context, in *UserProfileCardRequest, opts ...grpc.CallOption) (*UserProfileCardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserProfileCardResponse)
+	err := c.cc.Invoke(ctx, Users_UserProfileCard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *usersClient) FollowedUsers(ctx context.Context, in *FollowedUsersRequest, opts ...grpc.CallOption) (*FollowedUsersResponse, error) {
@@ -75,6 +99,8 @@ func (c *usersClient) UnfollowUser(ctx context.Context, in *UnfollowUserRequest,
 // All implementations must embed UnimplementedUsersServer
 // for forward compatibility.
 type UsersServer interface {
+	UserInfo(context.Context, *UserInfoRequest) (*UserInfoResponse, error)
+	UserProfileCard(context.Context, *UserProfileCardRequest) (*UserProfileCardResponse, error)
 	FollowedUsers(context.Context, *FollowedUsersRequest) (*FollowedUsersResponse, error)
 	FollowUser(context.Context, *FollowUserRequest) (*FollowUserResponse, error)
 	UnfollowUser(context.Context, *UnfollowUserRequest) (*UnfollowUserResponse, error)
@@ -88,6 +114,12 @@ type UsersServer interface {
 // pointer dereference when methods are called.
 type UnimplementedUsersServer struct{}
 
+func (UnimplementedUsersServer) UserInfo(context.Context, *UserInfoRequest) (*UserInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserInfo not implemented")
+}
+func (UnimplementedUsersServer) UserProfileCard(context.Context, *UserProfileCardRequest) (*UserProfileCardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserProfileCard not implemented")
+}
 func (UnimplementedUsersServer) FollowedUsers(context.Context, *FollowedUsersRequest) (*FollowedUsersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FollowedUsers not implemented")
 }
@@ -116,6 +148,42 @@ func RegisterUsersServer(s grpc.ServiceRegistrar, srv UsersServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&Users_ServiceDesc, srv)
+}
+
+func _Users_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServer).UserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Users_UserInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServer).UserInfo(ctx, req.(*UserInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Users_UserProfileCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserProfileCardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServer).UserProfileCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Users_UserProfileCard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServer).UserProfileCard(ctx, req.(*UserProfileCardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Users_FollowedUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -179,6 +247,14 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "users.Users",
 	HandlerType: (*UsersServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "UserInfo",
+			Handler:    _Users_UserInfo_Handler,
+		},
+		{
+			MethodName: "UserProfileCard",
+			Handler:    _Users_UserProfileCard_Handler,
+		},
 		{
 			MethodName: "FollowedUsers",
 			Handler:    _Users_FollowedUsers_Handler,

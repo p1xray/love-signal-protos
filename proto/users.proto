@@ -4,10 +4,40 @@ package users;
 
 option go_package = "pxr.users.v1;usersv1;";
 
+import "google/protobuf/timestamp.proto";
+
+enum Gender {
+	MALE = 0;
+	FEMALE = 1;
+}
+
 service Users {
+	rpc UserInfo (UserInfoRequest) returns (UserInfoResponse);
+	rpc UserProfileCard (UserProfileCardRequest) returns (UserProfileCardResponse);
 	rpc FollowedUsers (FollowedUsersRequest) returns (FollowedUsersResponse);
 	rpc FollowUser (FollowUserRequest) returns (FollowUserResponse);
 	rpc UnfollowUser (UnfollowUserRequest) returns (UnfollowUserResponse);
+}
+
+message UserInfoRequest {
+	int64 userExternalId = 1; // Внешний идентификатор пользователя.
+}
+
+message UserInfoResponse {
+	int64 id = 1; // Идентификатор пользователя.
+	string name = 2; // Имя пользователя.
+}
+
+message UserProfileCardRequest {
+	int64 id = 1; // Идентификатор пользователя.
+}
+
+message UserProfileCardResponse {
+	int64 id = 1; // Идентификатор пользователя.
+	string name = 2; // Имя пользователя.
+	google.protobuf.Timestamp dateOfBirth = 3; // Дата рождения.
+	Gender gender = 4; // Пол.
+	string avatarUrl = 5; // Ссылка на аватар.
 }
 
 message FollowedUsersRequest {
