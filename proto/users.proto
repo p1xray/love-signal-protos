@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package users;
 
-option go_package = "pxr.users.v1;usersv1;";
+option go_package = "pxr.users;userspb;";
 
 import "google/protobuf/timestamp.proto";
 

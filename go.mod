@@ -1,4 +1,4 @@
-module github.com/p1xray/protos
+module github.com/p1xray/love-signal-protos
 
 go 1.23.4
 
