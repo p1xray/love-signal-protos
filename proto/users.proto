@@ -7,18 +7,18 @@ option go_package = "pxr.users;userspb;";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
-enum Gender {
-	GENDER_UNSPECIFIED = 0;
-	GENDER_MALE = 1;
-	GENDER_FEMALE = 2;
-}
-
 service Users {
 	rpc UserInfo (UserInfoRequest) returns (UserInfoResponse);
 	rpc UserProfileCard (UserProfileCardRequest) returns (UserProfileCardResponse);
 	rpc FollowedUsers (FollowedUsersRequest) returns (FollowedUsersResponse);
 	rpc FollowUser (FollowUserRequest) returns (FollowUserResponse);
 	rpc UnfollowUser (UnfollowUserRequest) returns (UnfollowUserResponse);
+}
+
+enum Gender {
+	GENDER_UNSPECIFIED = 0;
+	GENDER_MALE = 1;
+	GENDER_FEMALE = 2;
 }
 
 message UserInfoRequest {
@@ -43,31 +43,36 @@ message UserProfileCardResponse {
 }
 
 message FollowedUsersRequest {
-	int64 userExternalId = 1; // Внешний идентификатор пользователя.
+	int64 userId = 1; // Идентификатор пользователя.
 }
 
 message FollowedUsersResponse {
-	repeated FollowedUser Users = 1; // Список пользователей.
+	repeated FollowedUser users = 1; // Список пользователей.
 }
 
 message FollowedUser {
-	int64 id = 1; // Идентификатор пользователя.
-	string name = 2; // Имя пользователя.
+	int64 followLinkId = 1; // Идентификатор связи отслеживания.
+	uint32 sendedLikesCount = 2; // Количество отправленных лайков.
+	int64 userId = 3; // Идентификатор пользователя.
+	string name = 4; // Имя пользователя.
+	google.protobuf.StringValue avatarFileKey = 5; // Ссылка на аватар.
 }
 
 message FollowUserRequest {
-	int64 userExternalId = 1; // Внешний идентификатор пользователя.
-	int64 followedUserExternalId = 2; // Внешний идентификатор отслеживаемого пользователя.
+	int64 userId = 1; // Идентификатор пользователя.
+	int64 userIdToFollow = 2; // Идентификатор пользователя для отслеживания.
 }
 
 message FollowUserResponse {
 	bool success = 1; // Признак успешности операции.
+	repeated string errors = 2; // Список ошибок.
 }
 
 message UnfollowUserRequest {
-	int64 followId = 1; // Идентификатор записи отслеживания.
+	int64 followLinkId = 1; // Идентификатор связи отслеживания.
 }
 
 message UnfollowUserResponse {
 	bool success = 1; // Признак успешности операции.
+	repeated string errors = 2; // Список ошибок.
 }
